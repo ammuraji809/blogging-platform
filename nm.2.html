@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blogging Platform</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f6fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #0077ff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+
+    .create-post,
+    .all-posts {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #0077ff;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005fcb;
+    }
+
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+
+    .post:last-child {
+      border-bottom: none;
+    }
+
+    .post h3 {
+      margin: 0 0 10px;
+    }
+
+    .post p {
+      margin: 0 0 10px;
+    }
+
+    .delete-btn {
+      background-color: #ff4757;
+      padding: 5px 10px;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    footer {
+      background: #0077ff;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>My Blogging Platform</h1>
+  </header>
+
+  <main>
+    <section class="create-post">
+      <h2>Create a New Post</h2>
+      <form id="postForm">
+        <input type="text" id="title" placeholder="Enter post title" required />
+        <textarea id="content" placeholder="Write your blog content..." required></textarea>
+        <button type="submit">Publish Post</button>
+      </form>
+    </section>
+
+    <section class="all-posts">
+      <h2>All Posts</h2>
+      <div id="postsContainer"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Blogging Platform | Created with ❤️ using HTML, CSS & JS</p>
+  </footer>
+
+  <script>
+    // Load posts from localStorage
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    const postForm = document.getElementById("postForm");
+    const postsContainer = document.getElementById("postsContainer");
+
+    // Function to render posts
+    function renderPosts() {
+      postsContainer.innerHTML = "";
+      if (posts.length === 0) {
+        postsContainer.innerHTML = "<p>No blog posts yet. Start writing one!</p>";
+        return;
+      }
+
+      posts.forEach((post, index) => {
+        const postDiv = document.createElement("div");
+        postDiv.classList.add("post");
+
+        postDiv.innerHTML = `
+          <h3>${post.title}</h3>
+          <p>${post.content}</p>
+          <small>Posted on: ${post.date}</small><br><br>
+          <button class="delete-btn" onclick="deletePost(${index})">Delete</button>
+        `;
+        postsContainer.appendChild(postDiv);
+      });
+    }
+
+    // Function to add a new post
+    postForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+
+      if (title && content) {
+        const newPost = { title, content, date: new Date().toLocaleString() };
+        posts.unshift(newPost); // add newest first
+        localStorage.setItem("posts", JSON.stringify(posts));
+        renderPosts();
+        postForm.reset();
+      }
+    });
+
+    // Function to delete a post
+    function deletePost(index) {
+      posts.splice(index, 1);
+      localStorage.setItem("posts", JSON.stringify(posts));
+      renderPosts();
+    }
+
+    // Initial render
+    renderPosts();
+  </script>
+</body>
+</html>
